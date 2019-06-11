@@ -27,6 +27,8 @@ namespace UnitTests
         [InlineData(33, 16)]
         [InlineData(32, 1)]
         [InlineData(32, 17)]
+        [InlineData(32, 21)]
+        [InlineData(32, 33)]
         public void BadKeyOrIVTest(int keyLen, int ivLen)
         {
             byte[] key = new byte[keyLen];
@@ -35,7 +37,7 @@ namespace UnitTests
 
             Exception ex = Assert.Throws<ArgumentException>(() => aes = new AesProvider(key, iv));
 
-            Assert.Contains(" must be exactly ", ex.Message);
+            Assert.Contains(" must be ", ex.Message);
         }
 
         //https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/block-ciphers#AES
@@ -79,10 +81,10 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData("00000000000000000000000000000000000000000000000000000000000000FF", "AA000000000000000000000000000000", "AABBCCDDEEFF000000000000112233")]
-        [InlineData("000000000000000000000000000000000000000000000000000000000000AAFF", "FF000000000000000000000000000000", "AABBCCDDEEFF0000000000001122")]
-        [InlineData("0000000000000000000000000000000000000000000000000000000000000011", "DEAD0000000000000000000000000000", "AABBCCDDEEFF00000000000011")]
-        public void InvalidPaddingMode(string hexKey, string hexIv, string plainText)
+        [InlineData("00000000000000000000000000000000000000000000000000000000000000FF", "AA000000000000000000000000000000", "AABBCCDDEEFF000000000000112233", System.Security.Cryptography.PaddingMode.None)]
+        [InlineData("000000000000000000000000000000000000000000000000000000000000AAFF", "FF000000000000000000000000000000", "AABBCCDDEEFF0000000000001122", System.Security.Cryptography.PaddingMode.None)]
+        [InlineData("0000000000000000000000000000000000000000000000000000000000000011", "DEAD0000000000000000000000000000", "AABBCCDDEEFF00000000000011", System.Security.Cryptography.PaddingMode.None)]
+        public void InvalidPaddingMode(string hexKey, string hexIv, string plainText, System.Security.Cryptography.PaddingMode paddingMode)
         {
             byte[] key = hexKey.FromHex();
             byte[] iv = hexIv.FromHex();
@@ -90,7 +92,7 @@ namespace UnitTests
             byte[] encrptedBytes;
 
             //None of the cipher texts are an even multiple of the block size, so using no padding causes .NET to throw an error
-            AesProvider aes = new AesProvider(key, iv, System.Security.Cryptography.PaddingMode.None);
+            AesProvider aes = new AesProvider(key, iv, paddingMode);
             Exception ex = Assert.Throws<System.Security.Cryptography.CryptographicException>(() => encrptedBytes = aes.Encrypt(plainBytes));
         }
     }
