@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Security.Cryptography;
 
 namespace MD.XCryptoProvider
 {
     public class ShaProvider
     {
-        Algorithm SelectedAlgorithm;
+        readonly Algorithm SelectedAlgorithm;
         public enum Algorithm
         {
             SHA1,
@@ -31,13 +32,13 @@ namespace MD.XCryptoProvider
             switch (SelectedAlgorithm)
             {
                 case Algorithm.SHA1:
-                    return System.Security.Cryptography.SHA1Managed.Create().ComputeHash(input);
+                    return SHA1Cng.Create().ComputeHash(input);
                 case Algorithm.SHA256:
-                    return System.Security.Cryptography.SHA256Managed.Create().ComputeHash(input);
+                    return SHA256Cng.Create().ComputeHash(input);
                 case Algorithm.SHA384:
-                    return System.Security.Cryptography.SHA384Managed.Create().ComputeHash(input);
+                    return SHA384Cng.Create().ComputeHash(input);
                 case Algorithm.SHA512:
-                    return System.Security.Cryptography.SHA512Managed.Create().ComputeHash(input);
+                    return SHA512Cng.Create().ComputeHash(input);
                 default:
                     throw new ArgumentException("Valid options are: SHA1, SHA256, SHA384 or SHA512");
             }
