@@ -95,7 +95,7 @@ namespace MD.XConvert
         /// <returns></returns>
         public static byte[] GetBytes(this string value)
         {
-            return Encoding.ASCII.GetBytes(value);
+            return Encoding.UTF8.GetBytes(value);
         }
 
     }
